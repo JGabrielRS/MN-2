@@ -59,11 +59,4 @@ namespace integration {
     }
 }
 
-int main(){
-    double result = integration::newton_cotes(0, 1, 1, 3);
-    std::cout << result;
-    
-    return 0;
-}
-
 #endif
