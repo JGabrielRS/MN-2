@@ -33,10 +33,9 @@ namespace Mat{
     
     Matrix Matrix::from_vector(Vec::VecDouble vec){
         Matrix m{};
-        m.resize(1, vec.size());
-        m.set(0, 0, 1);
+        m.resize(vec.size(), 1);
         for(int i = 0; i < vec.size(); i++){
-            m.set(0,i, vec.at(i));
+            m.set(i,0, vec.at(i));
         }
         return m;
     }
@@ -74,14 +73,17 @@ namespace Mat{
         return matrix.at(x).at(y);
     }
     
-    void Matrix::print() {
-        cout << fixed << setprecision(PRINT_PRECISION_MATRIX);
+    void Matrix::print(int precision, int spacing) {
+        cout << fixed << setprecision(precision);
         for (int i = 0; i < matrix_size.first; i++) {
-            cout << "[";
+            cout << "{";
             for (int j = 0; j < matrix_size.second; j++) {
-                cout << setw(PRINT_W_VALUES) << at(i, j) << " "[j == matrix_size.second];
+                cout << setw(spacing) << at(i, j);
+                if(j < matrix_size.second-1) cout << ", ";
             }
-            cout << "  ]" << endl;
+            cout << "}";
+            if(i < matrix_size.first-1) cout << ",";
+            cout << endl;
         }
     }
     

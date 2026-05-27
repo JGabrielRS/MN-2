@@ -88,8 +88,15 @@ namespace qrmethod{
         for (int i = 0; i < n; i++){
             lamb.push_back(Anew.at(i, i));
         }
-        pair<Matrix, VecDouble> result = {P, lamb};
-        return result;
+        
+        // Normalizar, nem sempre funciona, as vezes P.at(n-1, 1) = 0 daí dá erro
+        // for(int i = 0; i < n; i++){
+        //     for(int j = 0; j < n; j++){
+        //         P.set(j, i, P.at(j, i)/P.at(n-1, i));
+        //     }
+        // }
+        
+        return {P, lamb};;
     }
 }
 

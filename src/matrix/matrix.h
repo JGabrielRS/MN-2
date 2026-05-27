@@ -9,9 +9,6 @@
 
 
 namespace Mat{
-    #define PRINT_PRECISION_MATRIX 3
-    #define PRINT_W_VALUES 8
-
     using namespace std;
 
     class Matrix {
@@ -33,7 +30,7 @@ namespace Mat{
             void resize(int x, int y);
             Matrix get_transposed();
     
-            void print();
+            void print(int precision = 3, int spacing = 8);
     
         protected:
             vector <vector <double>> matrix;

@@ -26,8 +26,7 @@ namespace eigenvalues{
 
         Matrix N_mat = Matrix::from_vector(N);
         Matrix N_transposed = N_mat.get_transposed();
-        // Matrix Nmult = N_mat*N_transposed; // FIXME descobrir pq a fórmula diz n*nT
-        Matrix Nmult = N_transposed*N_mat;
+        Matrix Nmult = N_mat*N_transposed;
         Matrix N2 = Nmult*2;
         
         Matrix H = I - N2;
@@ -37,11 +36,11 @@ namespace eigenvalues{
 
     pair<Matrix, Matrix> householder_method(Matrix A){
         int n = A.get_size().first;
-        Matrix H, Acur, Anext;
+        Matrix H, Acur;
         H = Matrix::get_indentity(n);
         Acur = A;
 
-        for(int i = 1; i <= n-2; i++){
+        for(int i = 0; i <= n-2; i++){
             Matrix Hi = householder_method_aux(Acur, i);
 
             Matrix AH = Acur*Hi;
