@@ -13,7 +13,6 @@ namespace Mat{
     #define PRINT_W_VALUES 8
 
     using namespace std;
-    using namespace Vec;
 
     class Matrix {
         public:
@@ -25,7 +24,7 @@ namespace Mat{
             Matrix();
     
             static Matrix get_indentity(int n);
-            static Matrix from_vector(VecDouble vec);
+            static Matrix from_vector(Vec::VecDouble vec);
     
             pair<int, int> get_size();
     

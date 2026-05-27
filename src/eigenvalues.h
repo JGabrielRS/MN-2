@@ -6,6 +6,7 @@
 
 namespace eigenvalues{
     using namespace Mat;
+    using namespace Vec;
 
     Matrix householder_method_aux(Matrix A, int i){
         int n = A.get_size().first;
@@ -34,13 +35,23 @@ namespace eigenvalues{
         return H;
     }
 
-    Matrix householder_method(Matrix A, int n){
-        Matrix H, Hi, Acur, Al;
+    pair<Matrix, Matrix> householder_method(Matrix A){
+        int n = A.get_size().first;
+        Matrix H, Acur, Anext;
         H = Matrix::get_indentity(n);
         Acur = A;
 
-        // TODO terminar
+        for(int i = 1; i <= n-2; i++){
+            Matrix Hi = householder_method_aux(Acur, i);
 
+            Matrix AH = Acur*Hi;
+            Matrix Hi_T = Hi.get_transposed();
+            Acur = Hi_T*AH;
+
+            H = H*Hi;
+        }
+
+        return {Acur, H};
     }
 };
 

@@ -31,7 +31,7 @@ namespace Mat{
         return matrix;
     }
     
-    Matrix Matrix::from_vector(VecDouble vec){
+    Matrix Matrix::from_vector(Vec::VecDouble vec){
         Matrix m{};
         m.resize(1, vec.size());
         m.set(0, 0, 1);
