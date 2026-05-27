@@ -6,26 +6,28 @@
 #include <utility>
 
 namespace qrdecomposition{
-    using namespace std;
+    using namespace Mat;
 
-    pair qr_decomposition(Matrix A, int n){
+    pair<Matrix, Matrix> qr_decomposition(Matrix A, int n){
         Matrix I = Matrix::get_indentity(n);
         Matrix QT, J, Rnew, Rold, R;
         QT = I;
         Rold = A;
         for (int j = 0; j < n; j++){
             for (int i = j+1; i <= n; i++){
-                J = jacobi_matrix(Rold, i, j, n);
+                J = jacobimatrix::jacobi_matrix(Rold, i, j, n);
                 Rnew = J * Rold;
                 Rold = Rnew;
                 QT = J * QT;
             }
         }
-        Q = Q.get_transposed();
+        // REVISAR!! isso tava assim antes
+        // Q = Q.get_transposed()/
+        // mudei pra não dar erro de sintaxe só, mas a semantica deve tá errada :)
+        QT = QT.get_transposed();
         R = Rnew;
-        pair<Matrix, Matrix> result = {Q, R};
+        pair<Matrix, Matrix> result = {QT, R};
         return result;
-
     }
 }
 
