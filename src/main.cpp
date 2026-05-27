@@ -1,6 +1,7 @@
 #include "eigenvalues.h"
 #include "matrix/matrix.h"
 #include "vec/vec.h"
+#include "qrmethod.h"
 
 int main(){
     // Vec::VecDouble vec2{1, 2, 3, 4};
@@ -16,14 +17,18 @@ int main(){
     // }};
 
     Mat::Matrix m{{
-        {3, 1, 0, 0, 0},
-        {1, 4, 3, 0, 0},
-        {0, 3, 5, 2, 1},
-        {0, 0, 2, 6, 3},
-        {0, 0, 1, 3, 8}
+        {40, 8, 4, 2, 1},
+        {8, 30, 12, 6, 2},
+        {4, 12, 20, 1, 2},
+        {2, 6, 1, 25, 4},
+        {1, 2, 2, 4, 5}
     }};
-    m = eigenvalues::householder_method_aux(m, 0);
-    m.print();
+    std::pair<Mat::Matrix, Vec::VecDouble> result = qrmethod::qr_method(m, m.get_size().first, 0.00000000000000000000000000000001);
+    Mat::Matrix p = result.first;
+    Vec::VecDouble lamb = result.second;
+    p.print();
+    Vec::print_vec(lamb);
+
 
     return 0;
 }
