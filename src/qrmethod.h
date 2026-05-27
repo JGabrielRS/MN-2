@@ -18,7 +18,7 @@ namespace qrmethod{
         double teta;
         // erro ta hardcoded, dps se quiser mudar da pra passar como parametro
         double error = 0.000001;
-        if (abs(A.at(i, j)) <= error){ return J.at(i, j); };
+        if (abs(A.at(i, j)) <= error){ return J; };
         if (abs(A.at(j, j)) <= error){
             if ((A.at(i, j)) < 0){
                 teta = PI/2;
@@ -32,7 +32,6 @@ namespace qrmethod{
         J.set(j, j, cos(teta));
         J.set(i, j, sin(teta));
         J.set(j, i, -sin(teta));
-
         return J;
     }
 
@@ -45,7 +44,6 @@ namespace qrmethod{
         
         for (int j = 0; j < n-1; j++){
             for (int i = j+1; i < n; i++){
-                std::cout<<"i = "<<i<<" j = "<<j<<endl;
                 J = jacobi_matrix(Rold, i, j, n);
                 Rnew = J * Rold;
                 Rold = Rnew;
@@ -67,7 +65,6 @@ namespace qrmethod{
         Aold = A;
         while (val > error) {
             pair<Matrix, Matrix> result = qr_decomposition(Aold, n);
-            std::cout<<("teste1")<<endl;
             
             Q = result.first;
             R = result.second;

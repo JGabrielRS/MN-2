@@ -23,7 +23,7 @@ int main(){
         {2, 6, 1, 25, 4},
         {1, 2, 2, 4, 5}
     }};
-    std::pair<Mat::Matrix, Vec::VecDouble> result = qrmethod::qr_method(m, m.get_size().first, 0.00000000000000000000000000000001);
+    std::pair<Mat::Matrix, Vec::VecDouble> result = qrmethod::qr_method(m, m.get_size().first, 0.0001);
     Mat::Matrix p = result.first;
     Vec::VecDouble lamb = result.second;
     p.print();
