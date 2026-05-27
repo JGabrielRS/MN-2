@@ -1,8 +1,12 @@
 #include "eigenvalues.h"
 #include "matrix/matrix.h"
+#include "vec/vec.h"
 
 int main(){
-    Matrix m{{
+    Vec::VecDouble vec2{1, 2, 3, 4};
+    Vec::print_vec(vec2);
+
+    Mat::Matrix m{{
         {3, 1, 0, 0, 0},
         {1, 4, 3, 0, 0},
         {0, 3, 5, 2, 1},
