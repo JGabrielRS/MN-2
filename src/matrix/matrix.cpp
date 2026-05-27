@@ -1,4 +1,5 @@
 #include "matrix.h"
+#include <cstddef>
 
 namespace Mat{
     Matrix::Matrix(int s){
@@ -6,6 +7,7 @@ namespace Mat{
         matrix_size = {s, s};
     }
     Matrix::Matrix(int s, int t){
+        // TODO revisar isso, acho que tá errado
         matrix = vector<vector<double>>(s+1, vector<double>(t+1));
         matrix_size = {s, t};
     }
@@ -104,8 +106,22 @@ namespace Mat{
     }
     
     Matrix operator*(Matrix &m1, Matrix &m2){
-        Matrix m{m1.get_size().first};
-        // TODO
+        if(m1.get_size().second != m2.get_size().first){
+            // TODO erro se as matrizes não forem compativeis
+            return 0;
+        };
+        Matrix m{m1.get_size().first, m2.get_size().second};
+
+        for(size_t i = 0; i < m1.get_size().first; i++){
+            for(size_t j = 0; j < m2.get_size().second; j++){
+                double sum = 0;
+                for(size_t k = 0; k < m1.get_size().second; k++){
+                    sum+= m1.at(i, k) * m2.at(k, j);
+                }
+                m.set(i, j, sum);
+            }
+        }
+
         return m;
     }
 }

@@ -22,16 +22,13 @@ namespace eigenvalues{
         
         VecDouble N = w - wl;
         N = vec_normalize(N);
-        
-        for(int i = 0; i < N.size(); i++){
-            cout << N.at(i) << " ";
-        }
 
         Matrix N_mat = Matrix::from_vector(N);
         Matrix N_transposed = N_mat.get_transposed();
-        Matrix Nmult = N_mat*N_transposed; // TODO implementar mult de matrizes
+        // Matrix Nmult = N_mat*N_transposed; // FIXME descobrir pq a fórmula diz n*nT
+        Matrix Nmult = N_transposed*N_mat;
         Matrix N2 = Nmult*2;
-
+        
         Matrix H = I - N2;
 
         return H;
@@ -43,6 +40,7 @@ namespace eigenvalues{
         Acur = A;
 
         // TODO terminar
+
     }
 };
 
