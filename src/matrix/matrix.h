@@ -10,20 +10,21 @@
 
 namespace Mat{
     using namespace std;
+    using namespace Vec;
 
     class Matrix {
         public:
             Matrix(int s);
             Matrix(int s, int t);
             // Copia todo o vetor de entrada
-            Matrix(vector <vector <double>> matrix_);
+            Matrix(vector<VecDouble> matrix_);
     
             Matrix();
 
             void switch_row(int x, int y);
     
             static Matrix get_indentity(int n);
-            static Matrix from_vector(Vec::VecDouble vec);
+            static Matrix from_vector(VecDouble vec);
     
             pair<int, int> get_size();
     
@@ -35,7 +36,7 @@ namespace Mat{
             void print(int precision = 3, int spacing = 8);
     
         protected:
-            vector <vector <double>> matrix;
+            vector <VecDouble> matrix;
             pair<int, int> matrix_size;
     
     };

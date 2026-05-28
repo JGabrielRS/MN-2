@@ -76,12 +76,9 @@ namespace qrmethod{
             // std::cout<<("--------------------------------------")<<endl; 
             double sum = 0;
             for (int i = 0; i < n; i++){
-                for (int j = 0; j < n; j++){
-                    if (i != j){
-                        sum = sum + std::pow(Anew.at(i, j), 2);
-                    }
+                for (int j = i+1; j < n; j++){
+                    sum = sum + pow(Anew.at(i, j), 2);
                 }  
-            
             }
             val = sum;
         }

@@ -3,15 +3,15 @@
 
 namespace Mat{
     Matrix::Matrix(int s){
-        matrix = vector<vector<double>>(s+1, vector<double>(s+1));
+        matrix = vector<VecDouble>(s+1, VecDouble(s+1));
         matrix_size = {s, s};
     }
     Matrix::Matrix(int s, int t){
         // TODO revisar isso, acho que tá errado
-        matrix = vector<vector<double>>(s+1, vector<double>(t+1));
+        matrix = vector<VecDouble>(s+1, VecDouble(t+1));
         matrix_size = {s, t};
     }
-    Matrix::Matrix(vector<vector<double>> matrix_){
+    Matrix::Matrix(vector<VecDouble> matrix_){
         matrix = matrix_;
     
         // Assumindo que o vetor recebido é uma matriz, obviamente
@@ -19,7 +19,7 @@ namespace Mat{
     }
     
     Matrix::Matrix(){
-        matrix = vector<vector<double>>();
+        matrix = vector<VecDouble>();
         matrix_size = {0, 0};
     }
 
@@ -43,7 +43,7 @@ namespace Mat{
         return matrix;
     }
     
-    Matrix Matrix::from_vector(Vec::VecDouble vec){
+    Matrix Matrix::from_vector(VecDouble vec){
         Matrix m{};
         m.resize(vec.size(), 1);
         for(int i = 0; i < vec.size(); i++){
@@ -91,7 +91,7 @@ namespace Mat{
             cout << "{";
             for (int j = 0; j < matrix_size.second; j++) {
                 cout << setw(spacing) << at(i, j);
-                if(j < matrix_size.second-1) cout << ", ";
+                if(j < matrix_size.second-1) cout << "," + (spacing!=0)?" ":"";
             }
             cout << "}";
             if(i < matrix_size.first-1) cout << ",";

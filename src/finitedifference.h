@@ -48,8 +48,7 @@ namespace finite_difference{
             lin_system.set(i, i, yCur);
             lin_system.set(i, i+1, yNext);
         }
-        lin_system.print();
-        print_vec(yValues);
+        
         return linear_system::solve_lu(lin_system, yValues);
     }
 }
