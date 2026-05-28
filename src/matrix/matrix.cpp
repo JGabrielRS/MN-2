@@ -22,6 +22,18 @@ namespace Mat{
         matrix = vector<vector<double>>();
         matrix_size = {0, 0};
     }
+
+    void Matrix::switch_row(int x, int y){
+        size_t c = matrix_size.second;
+
+        Matrix aux(1, c);
+
+        for (size_t i = 0; i < c; i++) {
+            aux.set(0, i, at(x, i));
+            set(x, i, at(y, i));
+            set(y, i, aux.at(0, i));
+        }
+    }
     
     Matrix Matrix::get_indentity(int n){
         Matrix matrix{n};

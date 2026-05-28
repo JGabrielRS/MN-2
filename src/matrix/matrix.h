@@ -19,6 +19,8 @@ namespace Mat{
             Matrix(vector <vector <double>> matrix_);
     
             Matrix();
+
+            void switch_row(int x, int y);
     
             static Matrix get_indentity(int n);
             static Matrix from_vector(Vec::VecDouble vec);
