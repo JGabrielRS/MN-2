@@ -20,7 +20,7 @@ namespace finite_difference{
     // y(a) = ya
     // y(b) = yb
     VecDouble finite_differente_order2(double a, double b, double ya, double yb, int N, double c1, double c2, double c3, bool isANeumann = false, bool isBNeumann = false){
-        double delta = (b-a)/N; // FICAR DE OLHO!! talvez isso role como operação de inteiros
+        double delta = (b-a)/N;
         double yPrev, yCur, yNext;
         double delta2 = pow(delta, 2);
 
@@ -48,7 +48,7 @@ namespace finite_difference{
             lin_system.set(i, i, yCur);
             lin_system.set(i, i+1, yNext);
         }
-        
+
         return linear_system::solve_lu(lin_system, yValues);
     }
 }

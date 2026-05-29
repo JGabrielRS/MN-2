@@ -5,6 +5,7 @@
 #include "svddecomposition.h"
 #include "finitedifference.h"
 #include "linearsystem.h"
+#include "rungekuttaO4.h"
 
 int main(){
     double A, B, C, D, E, F;
@@ -71,38 +72,43 @@ int main(){
     // Mat::Matrix QMQ = resT.second * MQ;
 
     // std::pair<Mat::Matrix, Vec::VecDouble> resqr = qrmethod::qr_method(QMQ, QMQ.get_size().first, 0.0001);
-    // resqr.first.print();
-    // std::cout << std::endl;
+    // resqr.first.print_latex();
     // Vec::print_vec(resqr.second);
+    // double mult = 1;
+    // for(int i = 0; i < resqr.second.size(); i++){
+    //     mult*=resqr.second.at(i);
+    // }
+    // std::cout << mult;
+    // std::cout << std::endl;
+    //Vec::print_vec_latex(resqr.second);
 
     //Q3
-    Mat::Matrix P = {{
-        {A+1, 1, 0, 2},
-        {B+1, 0, 1, 1},
-        {C+1, 1, 1, 0},
-        {D+1, 2, 0, 1},
-        {E+1, 0, 2, 1},
-        {F+1, 1, 0, 1}
-    }};
-    Mat::Matrix Q = {{
-        {1, 0, A+1, 0, B+1, 0, C+1, 0, D+1, 1},
-        {0, 1, 0, B+1, 0, C+1, 0, D+1, 0,1},
-        {1, 1, 0, 0, E+1, 0, F+1, 0, 1, 0},
-        {0, 0, 1, 1, 0, A+1, 0, B+1, 1, 1}
-    }};
+    // Mat::Matrix P = {{
+    //     {A+1, 1, 0, 2},
+    //     {B+1, 0, 1, 1},
+    //     {C+1, 1, 1, 0},
+    //     {D+1, 2, 0, 1},
+    //     {E+1, 0, 2, 1},
+    //     {F+1, 1, 0, 1}
+    // }};
+    // Mat::Matrix Q = {{
+    //     {1, 0, A+1, 0, B+1, 0, C+1, 0, D+1, 1},
+    //     {0, 1, 0, B+1, 0, C+1, 0, D+1, 0,1},
+    //     {1, 1, 0, 0, E+1, 0, F+1, 0, 1, 0},
+    //     {0, 0, 1, 1, 0, A+1, 0, B+1, 1, 1}
+    // }};
 
-    Mat::Matrix M = P*Q;
-    Mat::Matrix MT = M.get_transposed();
-    Mat::Matrix MMT = M*MT;
-    Mat::Matrix MTM = MT*M;
-    //M.print(0, 0);
+    // Mat::Matrix M = P*Q;
+    // Mat::Matrix MT = M.get_transposed();
+    // Mat::Matrix MMT = M*MT;
+    // Mat::Matrix MTM = MT*M;
 
-    std::pair<Mat::Matrix, Vec::VecDouble> resultU = qrmethod::qr_method(MMT, MMT.get_size().first, 0.0001);
-    std::pair<Mat::Matrix, Vec::VecDouble> resultV = qrmethod::qr_method(MTM, MTM.get_size().first, 0.0001);
-    Mat::Matrix U = resultU.first;
-    Mat::Matrix V = resultV.first;
+    // std::pair<Mat::Matrix, Vec::VecDouble> resultU = qrmethod::qr_method(MMT, MMT.get_size().first, 0.0001);
+    // std::pair<Mat::Matrix, Vec::VecDouble> resultV = qrmethod::qr_method(MTM, MTM.get_size().first, 0.0001);
+    // Mat::Matrix U = resultU.first;
+    // Mat::Matrix V = resultV.first;
 
-    //Vec::VecDouble lambU = resultU.second;
+    // Vec::VecDouble lambU = resultU.second;
     //Vec::VecDouble lambV = resultV.second;
     // MTM.print(0, 0);
     // std::cout << std::endl;
@@ -110,36 +116,39 @@ int main(){
     // std::cout << std::endl;
     // V.print();
     // std::cout << std::endl;
-    // Vec::print_vec(lambU);
+    // Vec::print_vec_latex(lambU);
     // std::cout << std::endl;
     // Vec::print_vec(lambV);
 
     // Consegui testar essa no wolfram, deu certo o resultado :)
-    Vec::VecDouble sigma = svd_decomposition::svd_decomposition(M, 0.0001);
-    std::cout << "--- Valores singulares ---" << std::endl;
-    Vec::print_vec(sigma);
+    // Vec::VecDouble sigma = svd_decomposition::svd_decomposition(M, 0.0001);
+    // std::cout << "--- Valores singulares ---" << std::endl;
+    // Vec::print_vec(sigma);
 
-    Mat::Matrix bigSigma{MMT.get_size().first, MTM.get_size().second};
-    for(int i = 0; i < sigma.size(); i++){
-        bigSigma.set(i, i, sigma.at(i));
-    }
-    std::cout << "--- U ---" << std::endl;
-    U.print();
-    std::cout << "--- bigSigma ---" << std::endl;
-    bigSigma.print();
-    std::cout << "--- V ---" <<  std::endl;
-    V.print();
+    // Mat::Matrix bigSigma{MMT.get_size().first, MTM.get_size().second};
+    // for(int i = 0; i < sigma.size(); i++){
+    //     bigSigma.set(i, i, sigma.at(i));
+    // }
+    // std::cout << "--- U ---" << std::endl;
+    // U.print_latex();
+    // std::cout << "--- bigSigma ---" << std::endl;
+    // bigSigma.print_latex();
+    // std::cout << "--- V ---" <<  std::endl;
+    //V.print_latex();
     
-    // Calculando M de volta a partir da decomposição
-    // M = U*BigSigma*Vt
-    Mat::Matrix Vt = V.get_transposed();
-    Mat::Matrix sig_vt = bigSigma*Vt;
-    Mat::Matrix M_rec = U*sig_vt;
+    // // Calculando M de volta a partir da decomposição
+    // // M = U*BigSigma*Vt
+    // Mat::Matrix Vt = V.get_transposed();
+    // Mat::Matrix sig_vt = bigSigma*Vt;
+    // Mat::Matrix M_rec = U*sig_vt;
     
-    std::cout << "--- M ---" << std::endl;
-    M.print();
-    std::cout << "--- Reconstrucao de M ---" << std::endl;
-    M_rec.print();
+    // std::cout << "--- M ---" << std::endl;
+    // M.print();
+    // std::cout << "--- Reconstrucao de M ---" << std::endl;
+    // M_rec.print();
+
+    // Q4
+    Vec::VecDouble r
 
     // Q5
     // Problema abaixo foi apresentado na aula 27, testei e o programa resolveu corretamente :)

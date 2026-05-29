@@ -12,6 +12,7 @@ namespace Vec{
     double vec_length(VecDouble &vec);
     VecDouble vec_normalize(VecDouble &vec);
     void print_vec(VecDouble &vec);
+    void print_vec_latex(VecDouble &vec);
     
     VecDouble operator-(VecDouble &v1, VecDouble &v2);
 };

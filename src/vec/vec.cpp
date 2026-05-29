@@ -37,4 +37,13 @@ namespace Vec{
         }
         cout << ")" << endl;
     }
+
+    void print_vec_latex(VecDouble &vec){
+        cout << "\\begin{pmatrix}";
+        for(size_t i = 0; i < vec.size(); i++){
+            cout << vec.at(i);
+            if(i != vec.size()-1)  cout << " \\\\ ";
+        }
+        cout << "\\end{pmatrix}" << endl;
+    }
 }

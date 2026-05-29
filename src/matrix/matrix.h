@@ -34,6 +34,7 @@ namespace Mat{
             Matrix get_transposed();
     
             void print(int precision = 3, int spacing = 8);
+            void print_latex(int precision = 3);
     
         protected:
             vector <VecDouble> matrix;

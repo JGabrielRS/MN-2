@@ -90,7 +90,9 @@ namespace Mat{
         for (int i = 0; i < matrix_size.first; i++) {
             cout << "{";
             for (int j = 0; j < matrix_size.second; j++) {
-                cout << setw(spacing) << at(i, j);
+                double val = at(i, j);
+                val = (abs(val) < 1/pow(10, precision+1))?0:val;
+                cout << setw(spacing) << val;
                 if(j < matrix_size.second-1) cout << "," + (spacing!=0)?" ":"";
             }
             cout << "}";
@@ -98,7 +100,22 @@ namespace Mat{
             cout << endl;
         }
     }
-    
+
+    void Matrix::print_latex(int precision){
+        cout << fixed << setprecision(precision);
+        cout << "\\begin{bmatrix}";
+        for(int i = 0; i < matrix_size.first; i++){
+            for(int j = 0; j< matrix_size.second; j++){
+                double val = at(i, j);
+                val = (abs(val) < 1/pow(10, precision+1))?0:val;
+                cout << val;
+                if(j != matrix_size.second-1) cout << " & ";
+            }
+            if(i != matrix_size.first-1) cout << "\\\\ ";
+        }
+        cout << "\\end{bmatrix}";
+    }
+
     Matrix operator-(Matrix &m1, Matrix &m2){
         Matrix m{m1.get_size().first};
         for(int x = 0; x < m1.get_size().first; x++){
