@@ -1,171 +1,219 @@
-#include "matrix/matrix.h"
-#include "vec/vec.h"
-#include "eigenvalues.h"
-#include "qrmethod.h"
-#include "svddecomposition.h"
-#include "finitedifference.h"
-#include "linearsystem.h"
-#include "rungekuttaO4.h"
+// Dear ImGui: standalone example application for SDL3 + OpenGL
+// (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
-int main(){
-    double A, B, C, D, E, F;
-    A = 5; B = 6; C = 7; D = 9; E = 9; F = 1;
-    
-    // Vec::VecDouble vec2{1, 2, 3};
-    // Mat::Matrix matv = Mat::Matrix::from_vector(vec2);
-    // Mat::Matrix matvt = matv.get_transposed();
-    // matv.print();
-    // std::cout << std::endl;
-    // matvt.print();
-    // std::cout << std::endl;
-    // (matv*matvt).print();
-    // Vec::print_vec(vec2);
-    // Mat::Matrix m1{{
-    //     {1, 2, 3}
-    // }};
+// Learn about Dear ImGui:
+// - FAQ                  https://dearimgui.com/faq
+// - Getting Started      https://dearimgui.com/getting-started
+// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
+// - Introduction, links and more at the top of imgui.cpp
 
-    // Mat::Matrix m2{{
-    //     {1},
-    //     {2},
-    //     {3}
-    // }};
+#include "imgui.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_opengl3.h"
+#include <stdio.h>
+#include <SDL3/SDL.h>
+#if defined(IMGUI_IMPL_OPENGL_ES2)
+#include <SDL3/SDL_opengles2.h>
+#else
+#include <SDL3/SDL_opengl.h>
+#endif
 
-    // Mat::Matrix m{{
-    //     {40, 8, 4, 2, 1},
-    //     {8, 30, 12, 6, 2},
-    //     {4, 12, 20, 1, 2},
-    //     {2, 6, 1, 25, 4},
-    //     {1, 2, 2, 4, 5}
-    // }};
-    // Mat::Matrix m{{
-    //     {1, 0, 0},
-    //     {0, -3.0/5.0, -4.0/5.0},
-    //     {0, -4.0/5.0, 3.0/5.0}
-    // }};
+// Main code
+int main(int, char**)
+{
+    // Setup SDL
+    // [If using SDL_MAIN_USE_CALLBACKS: all code below until the main loop starts would likely be your SDL_AppInit() function]
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD))
+    {
+        printf("Error: SDL_Init(): %s\n", SDL_GetError());
+        return 1;
+    }
 
-    // std::pair<Mat::Matrix, Vec::VecDouble> result = qrmethod::qr_method(m, m.get_size().first, 0.01);
-    // Mat::Matrix p = result.first;
-    // Vec::VecDouble lamb = result.second;
-    // p.print();
-    // Vec::print_vec(lamb);
+    // Decide GL+GLSL versions
+#if defined(IMGUI_IMPL_OPENGL_ES2)
+    // GL ES 2.0 + GLSL 100 (WebGL 1.0)
+    const char* glsl_version = "#version 100";
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#elif defined(IMGUI_IMPL_OPENGL_ES3)
+    // GL ES 3.0 + GLSL 300 es (WebGL 2.0)
+    const char* glsl_version = "#version 300 es";
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#elif defined(__APPLE__)
+    // GL 3.2 Core + GLSL 150
+    const char* glsl_version = "#version 150";
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+#else
+    // GL 3.0 + GLSL 130
+    const char* glsl_version = "#version 130";
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#endif
 
-    // Q2
+    // Create window with graphics context
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+    float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+    SDL_WindowFlags window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+    SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL3+OpenGL3 example", (int)(1280 * main_scale), (int)(800 * main_scale), window_flags);
+    if (window == nullptr)
+    {
+        printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
+        return 1;
+    }
+    SDL_GLContext gl_context = SDL_GL_CreateContext(window);
+    if (gl_context == nullptr)
+    {
+        printf("Error: SDL_GL_CreateContext(): %s\n", SDL_GetError());
+        return 1;
+    }
 
-    // Mat::Matrix M = {{
-    //     {A+10, B+1, C+1, D+1, E+1, F+1, 1, 2, 3, 4},
-    //     {B+1, B+12, D+1, E+1, F+1, A+1, 2, 3, 4, 5},
-    //     {C+1, D+1, C+14, F+1, A+1, B+1, 3, 4, 5, 6},
-    //     {D+1, E+1, F+1, D+16, B+1, C+1, 4, 5, 6,7},
-    //     {E+1, F+1, A+1, B+1, E+18, D+1, 5, 6, 7, 8},
-    //     {F+1, A+1, B+1, C+1, D+1, F+20, 6, 7, 8, 9},
-    //     {1, 2, 3, 4, 5, 6, A+22, B+1, C+1, D+1},
-    //     {2, 3, 4, 5, 6, 7, B+1, B+24, E+1, F+1},
-    //     {3, 4, 5, 6, 7, 8, C+1, E+1, C+26, A+1},
-    //     {4, 5, 6, 7, 8,9, D+1, F+1, A+1, D+28}
-    // }};
+    SDL_GL_MakeCurrent(window, gl_context);
+    SDL_GL_SetSwapInterval(1); // Enable vsync
+    SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    SDL_ShowWindow(window);
 
-    // std::pair<Mat::Matrix, Mat::Matrix> res = eigenvalues::householder_method(M);
-    // std::pair<Mat::Matrix, Mat::Matrix> resT = {res.first.get_transposed(), res.second.get_transposed()};
-    
-    // Mat::Matrix Q = res.second;
-    // Mat::Matrix MQ = M*Q;
-    // Mat::Matrix QMQ = resT.second * MQ;
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-    // std::pair<Mat::Matrix, Vec::VecDouble> resqr = qrmethod::qr_method(QMQ, QMQ.get_size().first, 0.0001);
-    // resqr.first.print_latex();
-    // Vec::print_vec(resqr.second);
-    // double mult = 1;
-    // for(int i = 0; i < resqr.second.size(); i++){
-    //     mult*=resqr.second.at(i);
-    // }
-    // std::cout << mult;
-    // std::cout << std::endl;
-    //Vec::print_vec_latex(resqr.second);
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsLight();
 
-    //Q3
-    // Mat::Matrix P = {{
-    //     {A+1, 1, 0, 2},
-    //     {B+1, 0, 1, 1},
-    //     {C+1, 1, 1, 0},
-    //     {D+1, 2, 0, 1},
-    //     {E+1, 0, 2, 1},
-    //     {F+1, 1, 0, 1}
-    // }};
-    // Mat::Matrix Q = {{
-    //     {1, 0, A+1, 0, B+1, 0, C+1, 0, D+1, 1},
-    //     {0, 1, 0, B+1, 0, C+1, 0, D+1, 0,1},
-    //     {1, 1, 0, 0, E+1, 0, F+1, 0, 1, 0},
-    //     {0, 0, 1, 1, 0, A+1, 0, B+1, 1, 1}
-    // }};
+    // Setup scaling
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
+    style.FontScaleDpi = main_scale;        // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true automatically overrides this for every window depending on the current monitor)
 
-    // Mat::Matrix M = P*Q;
-    // Mat::Matrix MT = M.get_transposed();
-    // Mat::Matrix MMT = M*MT;
-    // Mat::Matrix MTM = MT*M;
+    // Setup Platform/Renderer backends
+    ImGui_ImplSDL3_InitForOpenGL(window, gl_context);
+    ImGui_ImplOpenGL3_Init(glsl_version);
 
-    // std::pair<Mat::Matrix, Vec::VecDouble> resultU = qrmethod::qr_method(MMT, MMT.get_size().first, 0.0001);
-    // std::pair<Mat::Matrix, Vec::VecDouble> resultV = qrmethod::qr_method(MTM, MTM.get_size().first, 0.0001);
-    // Mat::Matrix U = resultU.first;
-    // Mat::Matrix V = resultV.first;
+    // Load Fonts
+    // - If fonts are not explicitly loaded, Dear ImGui will select an embedded font: either AddFontDefaultVector() or AddFontDefaultBitmap().
+    //   This selection is based on (style.FontSizeBase * style.FontScaleMain * style.FontScaleDpi) reaching a small threshold.
+    // - You can load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
+    // - If a file cannot be loaded, AddFont functions will return a nullptr. Please handle those errors in your code (e.g. use an assertion, display an error and quit).
+    // - Read 'docs/FONTS.md' for more instructions and details.
+    // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use FreeType for higher quality font rendering.
+    // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
+    // - Our Emscripten build process allows embedding fonts to be accessible at runtime from the "fonts/" folder. See Makefile.emscripten for details.
+    //style.FontSizeBase = 20.0f;
+    //io.Fonts->AddFontDefaultVector();
+    //io.Fonts->AddFontDefaultBitmap();
+    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf");
+    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf");
+    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf");
+    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf");
+    //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
+    //IM_ASSERT(font != nullptr);
 
-    // Vec::VecDouble lambU = resultU.second;
-    //Vec::VecDouble lambV = resultV.second;
-    // MTM.print(0, 0);
-    // std::cout << std::endl;
-    // U.print();
-    // std::cout << std::endl;
-    // V.print();
-    // std::cout << std::endl;
-    // Vec::print_vec_latex(lambU);
-    // std::cout << std::endl;
-    // Vec::print_vec(lambV);
+    // Our state
+    bool show_demo_window = true;
+    bool show_another_window = false;
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    // Consegui testar essa no wolfram, deu certo o resultado :)
-    // Vec::VecDouble sigma = svd_decomposition::svd_decomposition(M, 0.0001);
-    // std::cout << "--- Valores singulares ---" << std::endl;
-    // Vec::print_vec(sigma);
+    // Main loop
+    bool done = false;
+    while (!done){
+        // Poll and handle events (inputs, window resize, etc.)
+        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
+        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
+        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+        // [If using SDL_MAIN_USE_CALLBACKS: call ImGui_ImplSDL3_ProcessEvent() from your SDL_AppEvent() function]
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            ImGui_ImplSDL3_ProcessEvent(&event);
+            if (event.type == SDL_EVENT_QUIT)
+                done = true;
+            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(window))
+                done = true;
+        }
 
-    // Mat::Matrix bigSigma{MMT.get_size().first, MTM.get_size().second};
-    // for(int i = 0; i < sigma.size(); i++){
-    //     bigSigma.set(i, i, sigma.at(i));
-    // }
-    // std::cout << "--- U ---" << std::endl;
-    // U.print_latex();
-    // std::cout << "--- bigSigma ---" << std::endl;
-    // bigSigma.print_latex();
-    // std::cout << "--- V ---" <<  std::endl;
-    //V.print_latex();
-    
-    // // Calculando M de volta a partir da decomposição
-    // // M = U*BigSigma*Vt
-    // Mat::Matrix Vt = V.get_transposed();
-    // Mat::Matrix sig_vt = bigSigma*Vt;
-    // Mat::Matrix M_rec = U*sig_vt;
-    
-    // std::cout << "--- M ---" << std::endl;
-    // M.print();
-    // std::cout << "--- Reconstrucao de M ---" << std::endl;
-    // M_rec.print();
+        // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppIterate() function]
+        if (SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED)
+        {
+            SDL_Delay(10);
+            continue;
+        }
 
-    // Q4
-    Vec::VecDouble r
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
+        ImGui::NewFrame();
 
-    // Q5
-    // Problema abaixo foi apresentado na aula 27, testei e o programa resolveu corretamente :)
-    // f(x) = 0 nesse problema, tem que mudar lá no arquivo
-    // Vec::VecDouble res = finite_difference::finite_differente_order2(0, 1, 0, 1, 4, 1, 0, -1, false, false);
-    
-    // Problema abaixo foi apresentado aqui: https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter23.03-Finite-Difference-Method.html
-    // Testei e o programa também resolveu corretamente
-    // f(x) = -9.8 nesse problema, tem que mudar lá no arquivo
-    // Vec::VecDouble res = finite_difference::finite_differente_order2(0, 5, 0, 50, 10, 1, 0, 0, false, false);
-    
-    // Problema da prova, a unica parte que não consigo dar certeza que tá certa é se tou calculando certo a condição de neumann
-    // Acho que pra testar se tá certo tem que ir ponto a ponto e checar se as condições batem
-    // IMPORTANTE!! f(x) = (D+1)*exp(-x) nesse problema, tem que mudar lá no arquivo
-    // Vec::VecDouble res = finite_difference::finite_differente_order2(0, 1, A, C, 10, A+1, B+1, C+1, false, true);
-    
-    // Vec::print_vec(res);
+        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+        if (show_demo_window)
+            ImGui::ShowDemoWindow(&show_demo_window);
+
+        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
+        {
+            static float f = 0.0f;
+            static int counter = 0;
+
+            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+            ImGui::Checkbox("Another Window", &show_another_window);
+
+            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+                counter++;
+            ImGui::SameLine();
+            ImGui::Text("counter = %d", counter);
+
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::End();
+        }
+
+        // 3. Show another simple window.
+        if (show_another_window)
+        {
+            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+            ImGui::Text("Hello from another window!");
+            if (ImGui::Button("Close Me"))
+                show_another_window = false;
+            ImGui::End();
+        }
+
+        // Rendering
+        ImGui::Render();
+        glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        SDL_GL_SwapWindow(window);
+    }
+
+    // Cleanup
+    // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppQuit() function]
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
+    ImGui::DestroyContext();
+
+    SDL_GL_DestroyContext(gl_context);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 
     return 0;
 }
