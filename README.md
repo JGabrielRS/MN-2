@@ -6,14 +6,16 @@ O código fonte do projeto está em ./src, a maioria dos arquivos de header são
 
 ## Como compilar
 
-Primeiramente, instale o SDL3, que é a unica dependência do projeto que não está incluida no repositório:
+Primeiramente, instale o SDL2, que é a unica dependência do projeto que não está incluida no repositório:
 
 ```bash
 # MSYS2 mingw:
-pacman -S mingw-w64-x86_64-sdl3
+pacman -S mingw-w64-x86_64-SDL2
+
+# Debian acho
+apt install libsdl2-dev
 
 # TODO Descobrir o pacote pra outras plataformas,
-# Infelizmente acho que o SDL3 não tem pacote em todo lugar ainda, talvez vale usar o SDL2 por isso
 ```
 
 Depois só compilar com o cmake, independente da plataforma: *(Se eu tiver configurado tudo direito)*
