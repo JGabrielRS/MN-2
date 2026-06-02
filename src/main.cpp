@@ -7,9 +7,14 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-#include "imgui.h"
-#include "imgui_impl_sdl2.h"
-#include "imgui_impl_opengl3.h"
+//#include "imgui.h"
+#include "../deps/include/imgui.h"
+//#include "imgui_impl_sdl2.h"
+#include "../deps/include/imgui_impl_sdl2.h"
+//#include "imgui_impl_opengl3.h"
+#include "../deps/include/imgui_impl_opengl3.h"
+#include "vec/vec.h"
+#include <cfloat>
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #if defined(IMGUI_IMPL_OPENGL_ES2)
@@ -20,6 +25,8 @@
 #ifdef _WIN32
 #include <windows.h>        // SetProcessDPIAware()
 #endif
+
+#include "finitedifference.h"
 
 // Main code
 int main(int, char**){
@@ -131,10 +138,39 @@ int main(int, char**){
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
     //IM_ASSERT(font != nullptr);
 
+    #define NUM 1000
+
     // Our state
-    bool show_demo_window = true;
-    bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    float* points = (float*)malloc(sizeof(float)*NUM);
+
+    double a, b, ya, yb, c1, c2, c3;
+    int N;
+    Vec::VecDouble res;
+    a = 0;
+    b = 5;
+    ya = 0;
+    yb = 50;
+    c1 = 1;
+    c2 = 0;
+    c3 = 0;
+    N = NUM;
+
+    // Problema abaixo foi apresentado na aula 27, testei e o programa resolveu corretamente :)
+    // f(x) = 0 nesse problema, tem que mudar lá no arquivo
+    // Vec::VecDouble res = finite_difference::finite_differente_order2(0, 1, 0, 1, 10, 1, 0, -1, false, false);
+    
+    // Problema abaixo foi apresentado aqui: https://pythonnumericalmethods.studentorg.berkeley.edu/notebooks/chapter23.03-Finite-Difference-Method.html
+    // Testei e o programa também resolveu corretamente
+    // f(x) = -9.8 nesse problema, tem que mudar lá no arquivo
+    res = finite_difference::finite_differente_order2(0, 5, 0, 50, 10, 1, 0, 0, false, false);
+    
+    // Problema da prova, a unica parte que não consigo dar certeza que tá certa é se tou calculando certo a condição de neumann
+    // Acho que pra testar se tá certo tem que ir ponto a ponto e checar se as condições batem
+    // IMPORTANTE!! f(x) = (D+1)*exp(-x) nesse problema, tem que mudar lá no arquivo
+    // Vec::VecDouble res = finite_difference::finite_differente_order2(0, 1, A, C, 10, A+1, B+1, C+1, false, true);
+    
+    // Vec::print_vec(res);
 
     // Main loop
     bool done = false;
@@ -164,40 +200,30 @@ int main(int, char**){
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
-            static float f = 0.0f;
-            static int counter = 0;
+            ImGui::Begin("Hello, world!");
 
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+            ImGui::InputDouble("a", &a);
+            ImGui::InputDouble("b", &b);
+            ImGui::InputDouble("ya", &ya);
+            ImGui::InputDouble("yb", &yb);
+            ImGui::InputDouble("c1", &c1);
+            ImGui::InputDouble("c2", &c2);
+            ImGui::InputDouble("c3", &c3);
+            ImGui::InputInt("N", &N);
 
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            ImGui::Checkbox("Another Window", &show_another_window);
+            if(ImGui::Button("submit")){
+                Vec::VecDouble res = finite_difference::finite_differente_order2(a, b, ya, yb, N, c1, c2, c3, false, false);
 
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+                for(int i = 0; i < NUM; i++) points[i] = res.at(i);
+            }
 
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            
             ImGui::End();
-        }
 
-        // 3. Show another simple window.
-        if (show_another_window)
-        {
-            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
-                show_another_window = false;
+            ImGui::Begin("Plot");
+            ImGui::PlotLines("Teste", points, NUM, 0, "teste", FLT_MAX, FLT_MAX, {800, 800});
             ImGui::End();
         }
 

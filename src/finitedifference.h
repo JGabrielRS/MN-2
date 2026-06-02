@@ -11,9 +11,9 @@ namespace finite_difference{
 
     // Em algum momento deveriamos fazer isso ser uma função anonima
     double f(double x){
-        // return -9.8;
+        return -9.8;
         // return 0;
-        return 10*exp(-x);
+        //return 10*exp(-x);
     }
 
     // Problemas no formato c1*y''(x)+c2*y'(x)+c3y(x)=f(x)
