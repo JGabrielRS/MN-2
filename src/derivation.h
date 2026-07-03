@@ -14,6 +14,10 @@ namespace derivartion{
         return (f(x+delta)-f(x))/delta;
     }
 
+    double derivada_foward(unsigned char* img, int x, int y, int w){
+        return static_cast<double>(img[y*w+(x+1)]-img[y*w+x]);
+    }
+
     double derivada_foward_erroO2(double x, double delta){
         return (-f(x+2*delta)+4*(f(x+delta))-3*(f(x)))/(2*delta);
     }
@@ -31,7 +35,7 @@ namespace derivartion{
     }
 
     double derivada_foward_segundaOrdem_erroO3(double x, double delta){
-        return (35*f(x)-104*f(x+delta)+114*f(x+2*delta)-56*f(x+3*delta)+11*f(delta+4*h))/(12*std::pow(delta,2));
+        return (35*f(x)-104*f(x+delta)+114*f(x+2*delta)-56*f(x+3*delta)+11*f(delta+4*delta))/(12*std::pow(delta,2));
     }
 
     double derivada_foward_terceiraOrdem(double x, double delta){
@@ -51,6 +55,10 @@ namespace derivartion{
         return (f(x)-f(x-delta))/delta;
     }
 
+    double derivada_backward(unsigned char* img, int x, int y, int w){
+        return static_cast<double>(img[y*w+x]-img[y*w+(x-1)]);
+    }
+
     double derivada_backward_erroO2(double x, double delta){
         return (3*f(x)-4*f(x-delta)+f(x-2*delta))/(2*delta);
     }   
@@ -68,7 +76,7 @@ namespace derivartion{
     }   
 
     double derivada_backward_segundaOrdem_erroO3(double x, double delta){
-        return (35*f(x)-104*f(x-delta)+114*f(x-2*delta)-56*f(x-3*delta)+11*f(x-4*delta))(12*std::pow(delta, 2));
+        return (35*f(x)-104*f(x-delta)+114*f(x-2*delta)-56*f(x-3*delta)+11*f(x-4*delta))/(12*std::pow(delta, 2));
     }
 
     double derivada_backward_terceiraOrdem(double x, double delta){
@@ -85,12 +93,20 @@ namespace derivartion{
 
     // derivadas central
     double derivada_central(double x, double delta){
-        return (f(x+0.5*delta)-f(x-0.5*f))/delta;
+        return (f(x+0.5*delta)-f(x-0.5*delta))/delta;
     }
 
     double derivada_central_erroO2(double x, double delta){
         return (f(x+delta)-f(x-delta))/(2*delta);
     }
+
+    double derivada_central_erroO2_X(unsigned char* img, int x, int y, int w){
+        return static_cast<double>(img[y*w+(x+1)]-img[y*w+(x-1)])/2.0;
+    }
+
+    double derivada_central_erroO2_Y(unsigned char* img, int x, int y, int w) {
+    return static_cast<double>(img[(y + 1) * w + x] - img[(y - 1) * w + x]) / 2.0;
+}
 
     double derivada_central_erroO3(double x, double delta){
         return (-f(x+2*delta)+8*f(x+delta)-8*f(x-delta)+f(x-2*delta))/(12*delta);
@@ -117,7 +133,7 @@ namespace derivartion{
     }
 
     double derivada_central_terceiraOrdem_erroO3(double x, double delta){
-        return (-11*f(x-2.5*delta)+35*f(x-1.5*delta)-38*f(x-0.5*delta)+14*f(x+0.5*delta)+f(x+1.5*delta)-f(x+2.5*delta))(8*std::pow(delta, 3));
+        return (-11*f(x-2.5*delta)+35*f(x-1.5*delta)-38*f(x-0.5*delta)+14*f(x+0.5*delta)+f(x+1.5*delta)-f(x+2.5*delta))/(8*std::pow(delta, 3));
     }
 
 }
