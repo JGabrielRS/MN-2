@@ -25,6 +25,7 @@ namespace Mat{
     
             static Matrix get_indentity(int n);
             static Matrix from_vector(VecDouble vec);
+            static VecDouble to_vector(Matrix m);
     
             pair<int, int> get_size();
     
@@ -32,6 +33,7 @@ namespace Mat{
             void set(int x, int y, double val);
             void resize(int x, int y);
             Matrix get_transposed();
+            Matrix get_inverse();
     
             void print(int precision = 3, int spacing = 8);
             void print_latex(int precision = 3);
@@ -45,6 +47,7 @@ namespace Mat{
     Matrix operator-(Matrix &m1, Matrix &m2);
     Matrix operator*(Matrix &m1, double val);
     Matrix operator*(Matrix &m1, Matrix &m2);
+    Matrix operator*(Matrix &m, VecDouble &v);
 };
 
 

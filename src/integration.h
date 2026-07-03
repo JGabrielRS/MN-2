@@ -1,9 +1,13 @@
 #ifndef INTEGRATION
 #define INTEGRATION
 
+#include "qrmethod.h"
+#include <cmath>
 #include <math.h>
 #include <iostream>
 #include <vector>
+#include <functional>
+#include <numbers>
 
 namespace integration {
     using namespace std;
@@ -209,6 +213,73 @@ namespace integration {
     double gauss_chebyshev(int n){
         GaussWeights points = get_chebyshev_weights(n);
         return sum_gauss(points, n);
+    }
+
+
+    // === Exponencial ===
+
+    double exp_integrate(double a, double b, double c, double epsilon, function<double(double)> x, function<double(double)> dx){
+        double N = 2; // Número de partições
+        double I_old = 0;
+        double E = 1;
+
+        while (E > epsilon){
+            N *= 2;
+            double delta_s = 2*c/N;
+            double I_new = 0; // Coloquei isso pq tá nas minhas anotações mas é uma mudança de variável desnecessária
+            for(int i = 0; i < N; i++){
+                double si = -c + i*delta_s;
+                // Nota: esse "si" embaixo é um "xi" nas minhas anotações, mas xi não foi definido em lugar nenhum,
+                // acho que foi só um erro na anotação mesmo, mas vale ficar de olho
+                double sf = si + delta_s;
+                double I_i = (delta_s/2)*f(x(si)*dx(si));
+                I_new += I_i + f(x(sf)*dx(sf));
+            }
+            I_old = I_new;
+
+            // Nas minhas anotações não tem o cálculo desse erro, chutei que é igual o da outra função
+            E = ((I_new - I_old)/I_new);
+        }
+
+        return I_old;
+    }
+
+    double exp_integral(double a, double b, double epsilon_C, double epislon_I, function<double(double)> x, function<double(double)> dx){
+        double C = 1;
+        double E = 1;
+        double delta_C = 0.1;
+        double I_old = 0;
+
+        while (E > epsilon_C){
+            C += delta_C;
+            double I_new = exp_integrate(a, b, C, epislon_I, x, dx);
+            E = abs((I_new - I_old)/I_new);
+            I_old = I_new;
+        }
+
+        return I_old;
+    }
+
+    double simple_exponential_integration(double a, double b, double epsilon_C, double epislon_I){
+        return exp_integral(a, b, epsilon_C, epislon_I,
+            [a, b](double s){
+                return (a+b)/2 + ((b-a)/2)*tanh(s);
+            },
+            [a, b](double s){
+                return ((b-a)/2)*(1/pow(cosh(s), 2));
+            }
+        );
+    }
+
+    double double_exponential_integration(double a, double b, double epsilon_C, double epislon_I){
+        return exp_integral(a, b, epsilon_C, epislon_I,
+            [a, b](double s){
+                return (a+b)/2 + ((b-a)/2)*tanh((PI/2)*sinh(s));
+            },
+            [a, b](double s){
+                return ((b-a)/2)*((PI/2)*(cosh(s)/pow(cosh((PI/2)*sinh(s)), 2)));
+            }
+        );
     }
 }
 

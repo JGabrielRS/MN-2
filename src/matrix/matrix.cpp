@@ -51,6 +51,16 @@ namespace Mat{
         }
         return m;
     }
+
+    // Supondo que m é uma matriz coluna
+    VecDouble Matrix::to_vector(Matrix m){
+        VecDouble v{};
+        v.resize(m.get_size().first, 1);
+        for(int i = 0; i < m.get_size().first; i++){
+            v.at(i) = m.at(i, 0);
+        }
+        return v;
+    }
     
     // first: linhas
     // second: colunas
@@ -79,6 +89,10 @@ namespace Mat{
         }
         m.resize(get_size().second, get_size().first);
         return m;
+    }
+
+    Matrix Matrix::get_inverse(){
+        // TODO fazer
     }
     
     double Matrix::at(int x, int y){
@@ -154,6 +168,10 @@ namespace Mat{
         }
 
         return m;
+    }
+
+    Matrix operator*(Matrix &m, VecDouble &v){
+        // TODO
     }
 }
 

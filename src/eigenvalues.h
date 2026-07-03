@@ -2,11 +2,51 @@
 #define EIGENVALUES
 
 #include "matrix/matrix.h"
+#include "vec/vec.h"
 #include <math.h>
+#include <utility>
 
 namespace eigenvalues{
     using namespace Mat;
     using namespace Vec;
+
+    // TODO testar isso aqui
+    // método da potencia regular, não sei o nome em ingles :P
+    pair<double, VecDouble> regular_p(Matrix A, VecDouble v, double epsilon){
+        VecDouble vold = vec_normalize(v);
+        double d_old = 0;
+        double error = 1;
+        while (error > epsilon) {
+            Matrix vold_m = Matrix::from_vector(vold);
+            Matrix vnew = A*vold_m;
+            double d_new = (vold_m*vnew).at(0, 0);
+            error = abs((d_new - d_old)/d_new);
+
+            VecDouble vnew_m = Matrix::to_vector(vnew);
+            vold = vec_normalize(vnew_m);
+
+            d_old = d_new;
+        }
+
+        return {d_old, vold};
+    }
+
+    // TODO terminar e testar
+    pair<double, VecDouble> inverse_p(Matrix A, VecDouble v, double epsilon){
+        Matrix A_i = A.get_inverse();
+        return regular_p(A_i, v, epsilon);
+    }
+
+    // TODO testar
+    pair<double, VecDouble> desloc_p(Matrix A, VecDouble v, double epsilon, double mi){
+        Matrix I = Matrix::get_indentity(A.get_size().first);
+        I = I*mi;
+        Matrix A_desloc = A - I;
+        pair<double, VecDouble> res = inverse_p(A_desloc, v, epsilon);
+        return {res.first + mi, res.second};
+    }
+
+    // === householder ===
 
     Matrix householder_method_aux(Matrix A, int i){
         int n = A.get_size().first;
