@@ -63,6 +63,15 @@ void unidade02(){
     cout << integration::gauss_hermite(2, exp_f) << endl;
     cout << integration::gauss_laguerre(2, exp_f) << endl;
     cout << integration::gauss_chebyshev(2, exp_f) << endl;
+
+    cout << "------------------" << endl;
+
+    // Atividade da aula 15
+    cout << integration::integrate_area_ellipse_legendre(40, 40, 
+        [](double x, double y){ return 0.2*(pow(x,2)-pow(y,2)); },
+        [](double x, double y){ return 0.4*x; },
+        [](double x, double y){ return -0.4*y; }, 3
+    ) << endl;
 }
 
 void unidade03(){
