@@ -15,6 +15,7 @@ namespace integration {
     typedef pair<vector<double>, vector<double>> GaussWeights;
     typedef function<double(double)> NumFunc;
     typedef function<double(double, double)> NumFunc2;
+    typedef function<double(double, double, double)> NumFunc3;
 
     // double f(double x){
     //     return exp(x);
@@ -273,7 +274,6 @@ namespace integration {
         NumFunc2 y_ab = [b](double r, double s){
             return b*s;
         };
-
         double jacobi = a*b;
 
         GaussWeights legendre_ws = get_legendre_weights(n);
@@ -295,7 +295,7 @@ namespace integration {
         return sum * jacobi;
     }
 
-    // a: "largura máxima" da elipse; b: "altura máxima" da elipse
+    // a: "largura máxima" da elipse; b: "profundidade máxima" da elipse
     double integrate_area_ellipse_legendre(double a, double b, NumFunc2 f, NumFunc2 dxdf, NumFunc2 dydf, int n){
         // Mudança de variável da elipse
         NumFunc g = [a, b](double x){
@@ -312,7 +312,6 @@ namespace integration {
         NumFunc2 y_ab = [x_ab, g](double r, double s){
             return s*g(x_ab(r, s));
         };
-
         NumFunc2 jacobi = [a, g, x_ab](double r, double s){
             return a*g(x_ab(r, s));
         };
@@ -339,7 +338,66 @@ namespace integration {
 
     // === Integral de volume ===
 
-    double integrate_volume_ellipse_legendre();
+    double integrate_volume_square_legendre(double a, double b, NumFunc2 f, NumFunc2 dxdf, NumFunc2 dydf, int n){
+        NumFunc2 x_ab = [a](double r, double s){
+            return a*r;
+        };
+        NumFunc2 y_ab = [b](double r, double s){
+            return b*s;
+        };
+        double jacobi = a*b;
+
+        GaussWeights legendre_ws = get_legendre_weights(n);
+
+        double sum = 0;
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                sum += (
+                    legendre_ws.second.at(i)*legendre_ws.second.at(j) *
+                    f(x_ab(legendre_ws.first.at(i), legendre_ws.first.at(j)), y_ab(legendre_ws.first.at(i), legendre_ws.first.at(j)))
+                );
+            }
+        }
+
+        return sum * jacobi;
+    }
+
+    double integrate_volume_ellipse_legendre(double a, double b, NumFunc2 f, NumFunc2 dxdf, NumFunc2 dydf, int n){
+        // Mudança de variável da elipse
+        NumFunc g = [a, b](double x){
+            return sqrt((1-pow(x/a, 2))*pow(b, 2));
+        };
+        NumFunc dg = [a, b](double x){
+            return -((pow(b, 2)*x)/(pow(a, 2)*sqrt(pow(b, 2)*(1-pow(x/a, 2)))));
+        };
+
+        // Mudança de variável pro método de gauss legendre
+        NumFunc2 x_ab = [a](double r, double s){
+            return a*r;
+        };
+        NumFunc2 y_ab = [x_ab, g](double r, double s){
+            return s*g(x_ab(r, s));
+        };
+        NumFunc2 jacobi = [a, g, x_ab](double r, double s){
+            return a*g(x_ab(r, s));
+        };
+
+        GaussWeights legendre_ws = get_legendre_weights(n);
+
+        double sum = 0;
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                double jacobi_i = jacobi(legendre_ws.first.at(i), legendre_ws.first.at(j));
+                sum += (
+                    legendre_ws.second.at(i)*legendre_ws.second.at(j) *
+                    f(x_ab(legendre_ws.first.at(i), legendre_ws.first.at(j)), y_ab(legendre_ws.first.at(i), legendre_ws.first.at(j)))
+                    * jacobi_i
+                );
+            }
+        }
+
+        return sum;
+    }
 }
 
 #endif

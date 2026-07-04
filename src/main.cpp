@@ -67,11 +67,20 @@ void unidade02(){
     cout << "------------------" << endl;
 
     // Atividade da aula 15
+    cout << "Atividade da aula 15: " << endl;
     cout << integration::integrate_area_ellipse_legendre(40, 40, 
         [](double x, double y){ return 0.2*(pow(x,2)-pow(y,2)); },
         [](double x, double y){ return 0.4*x; },
         [](double x, double y){ return -0.4*y; }, 3
-    ) << endl;
+    ) << " metros quadrados" << endl;
+
+    // Atividade da aula 16
+    cout << "Atividade da aula 16: " << endl;
+    cout << integration::integrate_volume_ellipse_legendre(40, 20, 
+        [](double x, double y){ return 0.2*(pow(x,2)-pow(y,2)); },
+        [](double x, double y){ return 0.4*x; },
+        [](double x, double y){ return -0.4*y; }, 3
+    ) << " metros cubicos" << endl;
 }
 
 void unidade03(){
