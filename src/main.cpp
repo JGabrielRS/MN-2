@@ -38,15 +38,31 @@ void unidade02(){
     double b = 3;
     double correct = exp(b) - exp(a);
 
-    cout << integration::open_newton_cotes(-3, 3, 10, 2) << endl;
-    cout << integration::closed_newton_cotes(-3, 3, 10, 2) << endl;
-    cout << integration::gauss_legendre(-3, 3, 4) << endl;
+    integration::NumFunc exp_f = [](double x){
+        return exp(x);
+    };
 
+    cout << integration::open_newton_cotes(a, b, 10, 2, exp_f) << endl;
+    cout << integration::closed_newton_cotes(a, b, 10, 2, exp_f) << endl;
+    cout << integration::gauss_legendre(a, b, 4, exp_f) << endl;
     cout << "Valor real: " << correct << endl;
 
-    cout << integration::gauss_hermite(2) << endl;
-    cout << integration::gauss_laguerre(2) << endl;
-    cout << integration::gauss_chebyshev(2) << endl;
+    cout << "------------------" << endl;
+
+    cout << "Integral de 1/sqrt(x) de 0 a 1, que tem 0 como singularidade" << endl;
+    integration::NumFunc sing_f = [](double x){
+        return 1/sqrt(x);
+    };
+
+    cout << integration::simple_exponential_integration(0, 1, 0.0001, sing_f) << endl;
+    cout << integration::double_exponential_integration(0, 1, 0.0001, sing_f) << endl;
+    cout << "Valor real: " << 2 << endl;
+
+    cout << "------------------" << endl;
+
+    cout << integration::gauss_hermite(2, exp_f) << endl;
+    cout << integration::gauss_laguerre(2, exp_f) << endl;
+    cout << integration::gauss_chebyshev(2, exp_f) << endl;
 }
 
 void unidade03(){
@@ -73,6 +89,5 @@ void unidade05(){
 int main(){
     cout << setprecision(15);
 
-    unidade05();
-    unidade01();
+    unidade02();
 }
