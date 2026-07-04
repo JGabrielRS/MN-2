@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-namespace derivartion{
+namespace derivation{
     using namespace std;
     double f(double x){
         return pow((sin(2*x) + 4*pow(x, 2) + 3*x), 2);

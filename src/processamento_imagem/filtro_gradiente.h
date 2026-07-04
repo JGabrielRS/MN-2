@@ -87,7 +87,7 @@ namespace filtro_gradiente {
                 
                 double Gx = 0.0;
 
-                double derivada = derivartion::derivada_central_erroO2_X(img, x, y, w);
+                double derivada = derivation::derivada_central_erroO2_X(img, x, y, w);
                 
                 output[y * w + x] = derivada;
             }
@@ -130,7 +130,7 @@ namespace filtro_gradiente {
                 
                 double Gx = 0.0;
 
-                double derivada = derivartion::derivada_central_erroO2_Y(img, x, y, w);
+                double derivada = derivation::derivada_central_erroO2_Y(img, x, y, w);
                 
                 output[y * w + x] = derivada;
             }

@@ -8,6 +8,7 @@
 #include "linearsystem.h"
 #include "rungekuttaO4.h"
 #include "derivation.h"
+#include "integration.h"
 #include "processamento_imagem/filtro_gaussiano.h"
 #include "processamento_imagem/processamento_imagem.h"
 #define STB_IMAGE_IMPLEMENTATION
@@ -15,8 +16,12 @@
 #include "processamento_imagem/stb_image.h"
 #include "processamento_imagem/stb_image_write.h"
 
-int main(){
-    //std::cout<< derivartion::derivada_foward(2, 0.001) << std::endl;
+using namespace std;
+using namespace Vec;
+using namespace Mat;
+
+void unidade01(){
+    //cout<< derivation::derivada_foward(2, 0.001) << endl;
     int w = 452;
     int h = 678;
     //filtro_gaussiano::filtro_gaussiano("src/processamento_imagem/kanye.jpg", w, h);
@@ -25,5 +30,49 @@ int main(){
     //filtro_gradiente::filtro_sobel_B("src/processamento_imagem/kanye.jpg", w, h);
     processamento_imagem::processamento_imagem_Alg1("src/processamento_imagem/kanye.jpg", w, h);
     processamento_imagem::processamento_imagem_Alg2("src/processamento_imagem/kanye.jpg", w, h);
-    return 0;
+}
+
+void unidade02(){
+    cout << "Integral de exp(x) de -3 a 3" << endl;
+    double a = -3;
+    double b = 3;
+    double correct = exp(b) - exp(a);
+
+    cout << integration::open_newton_cotes(-3, 3, 10, 2) << endl;
+    cout << integration::closed_newton_cotes(-3, 3, 10, 2) << endl;
+    cout << integration::gauss_legendre(-3, 3, 4) << endl;
+
+    cout << "Valor real: " << correct << endl;
+
+    cout << integration::gauss_hermite(2) << endl;
+    cout << integration::gauss_laguerre(2) << endl;
+    cout << integration::gauss_chebyshev(2) << endl;
+}
+
+void unidade03(){
+    
+}
+
+void unidade04(){
+    
+}
+
+void unidade05(){
+    // N é 20 para que delta seja 0.1: (b-a)/N = 0.1 -> (2-0/N) = 0.1 -> N = 20
+    VecDouble res = finite_difference::finite_differente_order2(0, 2, 10, 1, 20, 1, 7, -1);
+    
+    VecDouble points;
+    for(int i = 0; i <= 20; i++){
+        points.push_back(0.1*i);
+    }
+
+    print_vec(res);
+    print_vec(points);
+}
+
+int main(){
+    cout << setprecision(15);
+
+    unidade05();
+    unidade01();
 }
