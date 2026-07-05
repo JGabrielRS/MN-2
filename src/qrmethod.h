@@ -56,7 +56,8 @@ namespace qrmethod{
         return result;
     }
     
-    pair<Matrix, VecDouble> qr_method(Matrix A, int n, double error){
+    pair<Matrix, VecDouble> qr_method(Matrix A, double error){
+        int n = A.get_size().first;
         Matrix I = Matrix::get_indentity(n);
         Matrix P, Q, R, Anew, Aold, Al;
         VecDouble lamb;

@@ -15,7 +15,7 @@ namespace svd_decomposition{
         Matrix AT = A.get_transposed();
         Matrix A_bar = m<n?A*AT:AT*A;
 
-        pair<Matrix, VecDouble> qr_result = qrmethod::qr_method(A_bar, A_bar.get_size().first, error);
+        pair<Matrix, VecDouble> qr_result = qrmethod::qr_method(A_bar, error);
         VecDouble values = qr_result.second;
         for(size_t i = 0; i < values.size(); i++){
             // FIXME o que faz se for negativo?

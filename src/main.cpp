@@ -16,6 +16,8 @@
 #include "processamento_imagem/stb_image.h"
 #include "processamento_imagem/stb_image_write.h"
 
+#include <algorithm>
+
 using namespace std;
 using namespace Vec;
 using namespace Mat;
@@ -84,11 +86,71 @@ void unidade02(){
 }
 
 void unidade03(){
-    
+    Matrix A{{
+        {2, 0, 0},
+        {0, 3, 4},
+        {0, 4, 9}
+    }};
+
+    cout << "Testes dos métodos de autovalor e autovetor para a matriz: " << endl << "A:" << endl;
+    A.print();
+
+    cout << "------------------" << endl;
+    cout << "Metodo qr" << endl;
+
+    pair<Matrix, VecDouble> qr_res = qrmethod::qr_method(A, 0.001);
+    qr_res.first.print();
+    print_vec(qr_res.second);
+
+    // cout << "------------------" << endl;
+    // cout << "Metodo Householder" << endl;
+
+    // pair<Matrix, Matrix> hh_res = eigenvalues::householder_method(A);
+    // hh_res.first.print();
+    // cout << endl;
+    // hh_res.second.print();
+
+    cout << "------------------" << endl;
+    cout << "Metodo da potencia" << endl;
+
+    pair<double, VecDouble> reg_p_res = eigenvalues::regular_p(A, {1, 1, 1}, 0.0001);
+    cout << "autovalor: " << reg_p_res.first << endl;
+    print_vec(reg_p_res.second);
+
+    cout << "------------------" << endl;
+    cout << "Metodo da potencia inversa" << endl;
+
+    pair<double, VecDouble> inv_p_res = eigenvalues::inverse_p(A, {1, 1, 1}, 0.0001);
+    cout << "autovalor: " << inv_p_res.first << endl;
+    print_vec(inv_p_res.second);
+
+    cout << "------------------" << endl;
+    cout << "Metodo da potencia com deslocamento" << endl;
+
+    double epsilon = 0.00000000001;
+
+    VecDouble encontrados;
+    int i = 0;
+    while(encontrados.size() < A.get_size().first){
+        pair<double, VecDouble> desl_p_res = eigenvalues::desloc_p(A, {1, 1, 1}, epsilon, i);
+        cout << "Tentando deslocamento = " << i << endl;
+        if(isnan(desl_p_res.first)){
+            cout << "Deslocamento invalido, continuando..." << endl;
+        }else if(encontrados.size() != 0 && find_if(encontrados.begin(), encontrados.end(), [desl_p_res, epsilon](double x){return abs(x-desl_p_res.first) < epsilon*100; }) != encontrados.end()){
+            cout << "Autovalor " << desl_p_res.first << " ja encontrado, continuando..." << endl;
+        }else{
+            encontrados.push_back(desl_p_res.first);
+            cout << "Autovalor encontrado: " << desl_p_res.first << endl;
+            cout << "Autovetor encontrado:" << endl;
+            print_vec(desl_p_res.second);
+        }
+        i+=1;
+    }
+
 }
 
 void unidade04(){
-    
+
 }
 
 void unidade05(){
@@ -107,5 +169,5 @@ void unidade05(){
 int main(){
     cout << setprecision(15);
 
-    unidade02();
+    unidade03();
 }

@@ -19,7 +19,9 @@ namespace eigenvalues{
         while (error > epsilon) {
             Matrix vold_m = Matrix::from_vector(vold);
             Matrix vnew = A*vold_m;
-            double d_new = (vold_m*vnew).at(0, 0);
+            Matrix vold_m_t = vold_m.get_transposed();
+
+            double d_new = (vold_m_t*vnew).at(0, 0);
             error = abs((d_new - d_old)/d_new);
 
             VecDouble vnew_m = Matrix::to_vector(vnew);
@@ -34,7 +36,8 @@ namespace eigenvalues{
     // TODO terminar e testar
     pair<double, VecDouble> inverse_p(Matrix A, VecDouble v, double epsilon){
         Matrix A_i = A.get_inverse();
-        return regular_p(A_i, v, epsilon);
+        pair<double, VecDouble> res = regular_p(A_i, v, epsilon);
+        return {1.0/res.first, res.second};
     }
 
     // TODO testar

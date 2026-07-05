@@ -91,8 +91,52 @@ namespace Mat{
         return m;
     }
 
+    // Esse método usa uma eliminação de gauss bem ingênua, não é muito rápido nem deve ser muito estável
     Matrix Matrix::get_inverse(){
-        // TODO fazer
+        // TODO jogar um erro se a matriz não for quadrada
+        Matrix mat{get_size().first, get_size().second};
+        for(int i = 0; i < get_size().first; i++){
+            for(int j = 0; j < get_size().second; j++){
+                mat.set(i, j, at(i, j));
+            }
+        }
+
+        Matrix res = get_indentity(mat.get_size().first);
+        
+        int n = mat.get_size().first;
+        for (int i = 0; i < n; i++){
+            int maior = i;
+
+            for(int j = i + 1; j < n; ++j){
+                if (abs(mat.at(j, i)) > abs(mat.at(maior, i))) maior = j;
+            }
+
+            if (maior != i){
+                mat.switch_row(i, maior);
+                res.switch_row(i, maior);
+            }
+
+            // Antigo iterar
+            for (int k = 0; k < n; k++){
+                if(k == i) continue;
+                double x = -mat.at(k, i)/mat.at(i, i);
+                // mat.set(k, i, 0);
+
+                for (int j = 0; j < n; j++) {
+                    mat.set(k, j, mat.at(k, j) + (x * mat.at(i, j)));
+                    res.set(k, j, res.at(k, j) + (x * res.at(i, j)));
+                }
+            }
+        }
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                res.set(i, j, res.at(i, j)/mat.at(i, i));
+            }
+            mat.set(i, i, 1);
+        }
+
+        return res;
     }
     
     double Matrix::at(int x, int y){
@@ -131,7 +175,7 @@ namespace Mat{
     }
 
     Matrix operator-(Matrix &m1, Matrix &m2){
-        Matrix m{m1.get_size().first};
+        Matrix m{m1.get_size().first, m1.get_size().first};
         for(int x = 0; x < m1.get_size().first; x++){
             for(int y = 0; y < m1.get_size().first; y++){
                 m.set(x, y, m1.at(x,y) - m2.at(x,y));
@@ -141,9 +185,9 @@ namespace Mat{
     }
     
     Matrix operator*(Matrix &m1, double val){
-        Matrix m{m1.get_size().first};
+        Matrix m{m1.get_size().first, m1.get_size().second};
         for(int x = 0; x < m1.get_size().first; x++){
-            for(int y = 0; y < m1.get_size().first; y++){
+            for(int y = 0; y < m1.get_size().second; y++){
                 m.set(x, y, m1.at(x,y)*val);
             }
         }
@@ -153,6 +197,7 @@ namespace Mat{
     Matrix operator*(Matrix &m1, Matrix &m2){
         if(m1.get_size().second != m2.get_size().first){
             // TODO erro se as matrizes não forem compativeis
+            cerr << "Erro: Multiplicacao entre matrizes nao compativeis" << endl;
             return 0;
         };
         Matrix m{m1.get_size().first, m2.get_size().second};
@@ -168,10 +213,6 @@ namespace Mat{
         }
 
         return m;
-    }
-
-    Matrix operator*(Matrix &m, VecDouble &v){
-        // TODO
     }
 }
 

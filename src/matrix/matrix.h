@@ -47,7 +47,6 @@ namespace Mat{
     Matrix operator-(Matrix &m1, Matrix &m2);
     Matrix operator*(Matrix &m1, double val);
     Matrix operator*(Matrix &m1, Matrix &m2);
-    Matrix operator*(Matrix &m, VecDouble &v);
 };
 
 
