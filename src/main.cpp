@@ -23,15 +23,10 @@ using namespace Vec;
 using namespace Mat;
 
 void unidade01(){
-    //cout<< derivation::derivada_foward(2, 0.001) << endl;
-    int w = 452;
-    int h = 678;
-    //filtro_gaussiano::filtro_gaussiano("src/processamento_imagem/kanye.jpg", w, h);
-    //filtro_gradiente::filtro_sobel("src/processamento_imagem/kanye.jpg", w, h);
-    //filtro_gradiente::filtro_sobel_A("src/processamento_imagem/kanye.jpg", w, h);
-    //filtro_gradiente::filtro_sobel_B("src/processamento_imagem/kanye.jpg", w, h);
-    processamento_imagem::processamento_imagem_Alg1("src/processamento_imagem/kanye.jpg", w, h);
-    processamento_imagem::processamento_imagem_Alg2("src/processamento_imagem/kanye.jpg", w, h);
+    int w = 512;
+    int h = 512;
+    processamento_imagem::processamento_imagem_Alg1("src/processamento_imagem/fruits.png", w, h);
+    processamento_imagem::processamento_imagem_Alg2("src/processamento_imagem/fruits.png", w, h);
 }
 
 void unidade02(){
@@ -44,8 +39,11 @@ void unidade02(){
         return exp(x);
     };
 
-    cout << integration::open_newton_cotes(a, b, 10, 2, exp_f) << endl;
-    cout << integration::closed_newton_cotes(a, b, 10, 2, exp_f) << endl;
+    cout << "Newton-Cotes Fechado com p=4" << endl;
+    cout << integration::closed_newton_cotes(a, b, 10, 4, exp_f) << endl;
+    cout << "Newton-Cotes Aberto com p=4" << endl;
+    cout << integration::open_newton_cotes(a, b, 10, 4, exp_f) << endl;
+    cout << "Gauss-legendre com n=4" << endl;
     cout << integration::gauss_legendre(a, b, 4, exp_f) << endl;
     cout << "Valor real: " << correct << endl;
 
@@ -56,15 +54,24 @@ void unidade02(){
         return 1/sqrt(x);
     };
 
-    cout << integration::simple_exponential_integration(0, 1, 0.0001, sing_f) << endl;
-    cout << integration::double_exponential_integration(0, 1, 0.0001, sing_f) << endl;
+    cout << "Exponencial simples com epsilon = 0.001" << endl;
+    cout << integration::simple_exponential_integration(0, 1, 0.001, sing_f) << endl;
+    cout << "Exponencial dupla com epsilon = 0.001" << endl;
+    cout << integration::double_exponential_integration(0, 1, 0.001, sing_f) << endl;
     cout << "Valor real: " << 2 << endl;
 
     cout << "------------------" << endl;
 
-    cout << integration::gauss_hermite(2, exp_f) << endl;
-    cout << integration::gauss_laguerre(2, exp_f) << endl;
-    cout << integration::gauss_chebyshev(2, exp_f) << endl;
+    integration::NumFunc sin_f = [](double x){
+        return cos(x);
+    };
+
+    cout << "Gauss-Hermite com n=4" << endl;
+    cout << integration::gauss_hermite(4, sin_f) << endl;
+    cout << "Gauss-Laguerre com n=4" << endl;
+    cout << integration::gauss_laguerre(4, sin_f) << endl;
+    cout << "Gauss-Chebyshev com n=4" << endl;
+    cout << integration::gauss_chebyshev(4, sin_f) << endl;
 
     cout << "------------------" << endl;
 
@@ -102,14 +109,6 @@ void unidade03(){
     qr_res.first.print();
     print_vec(qr_res.second);
 
-    // cout << "------------------" << endl;
-    // cout << "Metodo Householder" << endl;
-
-    // pair<Matrix, Matrix> hh_res = eigenvalues::householder_method(A);
-    // hh_res.first.print();
-    // cout << endl;
-    // hh_res.second.print();
-
     cout << "------------------" << endl;
     cout << "Metodo da potencia" << endl;
 
@@ -146,28 +145,29 @@ void unidade03(){
         }
         i+=1;
     }
-
-}
-
-void unidade04(){
-
 }
 
 void unidade05(){
     // N é 20 para que delta seja 0.1: (b-a)/N = 0.1 -> (2-0/N) = 0.1 -> N = 20
-    VecDouble res = finite_difference::finite_differente_order2(0, 2, 10, 1, 20, 1, 7, -1);
+    VecDouble res = finite_difference::finite_differences_order2(0, 2, 10, 1, 20, 1, 7, -1);
     
     VecDouble points;
     for(int i = 0; i <= 20; i++){
         points.push_back(0.1*i);
     }
 
+    cout << "Resultado da aplicacao do metodo de diferencas finitas no problema da unidade 05" << endl;
+    cout << "Vetor y" << endl;
     print_vec(res);
+    cout << "Vetor x" << endl;
     print_vec(points);
 }
 
 int main(){
-    cout << setprecision(15);
+    cout << setprecision(10);
 
+    unidade01();
+    unidade02();
     unidade03();
+    unidade05();
 }

@@ -11,7 +11,7 @@
 
 namespace integration {
     using namespace std;
-    typedef pair<vector<double>, double> CotesWeight;
+    typedef pair<vector<double>, double> CotesWeights;
     typedef pair<vector<double>, vector<double>> GaussWeights;
     typedef function<double(double)> NumFunc;
     typedef function<double(double, double)> NumFunc2;
@@ -37,7 +37,7 @@ namespace integration {
 
     // === Newton-Cotes Fechado ===
     
-    double integrate_cotes(double x0, double xf, int p, CotesWeight& points, NumFunc f){
+    double integrate_cotes(double x0, double xf, int p, CotesWeights& points, NumFunc f){
         double delta = (xf - x0)/p;
 
         double sum = 0;
@@ -49,7 +49,7 @@ namespace integration {
         return (delta*points.second)*sum;
     }
 
-    CotesWeight get_closed_cotes_weigth(int p){
+    CotesWeights get_closed_cotes_weigth(int p){
         switch (p)
         {
         case 1:
@@ -69,7 +69,7 @@ namespace integration {
         double delta = (b - a)/n;
         double as = 0;
 
-        CotesWeight points = get_closed_cotes_weigth(p);
+        CotesWeights points = get_closed_cotes_weigth(p);
 
         for (int i = 0; i < n; i++){
             double xi = a + i * delta;
@@ -81,7 +81,7 @@ namespace integration {
 
     // === Newton-Cotes Aberto ===
 
-    CotesWeight get_open_cotes_weigth(int p){
+    CotesWeights get_open_cotes_weigth(int p){
         switch (p)
         {
         case 1:
@@ -101,7 +101,7 @@ namespace integration {
         double delta = (b - a)/n;
         double as = 0;
 
-        CotesWeight points = get_open_cotes_weigth(p);
+        CotesWeights points = get_open_cotes_weigth(p);
 
         for (int i = 0; i < n; i++){
             double xi = a + i * delta;
@@ -222,21 +222,21 @@ namespace integration {
     // === Exponencial ===
     // Serve pra resolver integral com singularidade nos limites
 
-    double exp_integrate(double a, double b, double c, NumFunc f, NumFunc x, NumFunc dx){
+    double exp_integrate(double c, NumFunc f, NumFunc x, NumFunc dx){
         return closed_newton_cotes(-c, c, 10, 4, [f, x, dx](double s){
             return f(x(s))*dx(s);
         });
     }
 
-    double exp_integral(double a, double b, double epsilon_C, NumFunc f, NumFunc x, NumFunc dx){
+    double exp_integral(double epsilon, NumFunc f, NumFunc x, NumFunc dx){
         double C = 1;
         double E = 1;
         double delta_C = 0.1;
         double I_old = 0;
 
-        while (E > epsilon_C){
+        while (E > epsilon){
             C += delta_C;
-            double I_new = exp_integrate(a, b, C, f, x, dx);
+            double I_new = exp_integrate(C, f, x, dx);
             E = abs((I_new - I_old)/I_new);
             I_old = I_new;
         }
@@ -244,8 +244,8 @@ namespace integration {
         return I_old;
     }
 
-    double simple_exponential_integration(double a, double b, double epsilon_C, NumFunc f){
-        return exp_integral(a, b, epsilon_C, f,
+    double simple_exponential_integration(double a, double b, double epsilon, NumFunc f){
+        return exp_integral(epsilon, f,
             [a, b](double s){
                 return (a+b)/2 + ((b-a)/2)*tanh(s);
             },
@@ -255,8 +255,8 @@ namespace integration {
         );
     }
 
-    double double_exponential_integration(double a, double b, double epsilon_C, NumFunc f){
-        return exp_integral(a, b, epsilon_C, f,
+    double double_exponential_integration(double a, double b, double epsilon, NumFunc f){
+        return exp_integral(epsilon, f,
             [a, b](double s){
                 return (a+b)/2 + ((b-a)/2)*tanh((PI/2)*sinh(s));
             },
